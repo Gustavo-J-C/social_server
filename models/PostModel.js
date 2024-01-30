@@ -22,8 +22,6 @@ const Post = sequelize.define('posts', {
   created_at: {
     type: Sequelize.DATE,
     defaultValue: Sequelize.NOW,
-    type: Sequelize.DataTypes.DATE,
-    defaultValue: Sequelize.DataTypes.NOW,
     allowNull: false,
   },
   deleted_at: {

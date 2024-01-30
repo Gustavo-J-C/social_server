@@ -23,7 +23,7 @@ const Comment = sequelize.define('comments', {
   },
   created_at: {
     type: Sequelize.DATE,
-    defaultValue: new Date(),
+    defaultValue: Sequelize.NOW,
     allowNull: false,
   },
   updated_at: {
