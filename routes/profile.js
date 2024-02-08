@@ -1,5 +1,7 @@
 const routes = require('express').Router();
+const multerConfig = require('../config/multer');
 
+const multer = require('multer');
 const profileController = require('../controllers/profile');
 const authenticateToken = require('../middlewares/authMiddleware');
 
@@ -8,7 +10,10 @@ routes.post('/follow', authenticateToken, profileController.follow)
 
 routes.get('/:userId', profileController.getProfile);
 
-routes.patch('/:userId', authenticateToken, profileController.editProfile);
+routes.patch('/:userId/edit', authenticateToken, profileController.editProfile);
+
+routes.patch('/:userId/image', authenticateToken, multer(multerConfig).single('file'), profileController.uploadProfileImage);
+
 routes.get('/:userId/summary', profileController.getProfileSummary);
 
 routes.get('/:userId/following', profileController.getFollowing);

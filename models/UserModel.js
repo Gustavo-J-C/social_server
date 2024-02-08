@@ -11,6 +11,10 @@ const User = sequelize.define('users', {
     type: Sequelize.STRING(100),
     allowNull: false,
   },
+  nickname: {
+    type: Sequelize.STRING(100),
+    allowNull: false
+  },
   password: {
     type: Sequelize.STRING(255),
     allowNull: false,
@@ -21,7 +25,6 @@ const User = sequelize.define('users', {
     unique: true,
   },
   created_at: {
-    type: Sequelize.DATE,
     type: Sequelize.NOW,
     defaultValue: new Date(),
     allowNull: false,

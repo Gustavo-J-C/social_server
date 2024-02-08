@@ -29,10 +29,6 @@ const Post = sequelize.define('posts', {
   },
 }, {
   timestamps: false,
-  dialectOptions: {
-    useUTC: false, // Indica que o Sequelize não deve usar UTC
-    timezone: '-03:00', // Ajuste para o seu fuso horário
-  },
 });
 
 Post.hasMany(PostImage, { foreignKey: 'post_id' });
