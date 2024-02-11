@@ -220,14 +220,16 @@ exports.uploadProfileImage = async function (req, res) {
         }
 
         const userId = req.params.userId;
-
-        const user = await User.findByPk(userId);
         
         // return
         const { originalname, mimetype, filename, size, key, location: url = '' } = req.file;
 
+        const userImage = await UserImage.findOne({where: {user_id: userId}});
 
-        // Crie o registro de imagem do post no banco de dados usando o modelo PostImage
+        if (userImage) {
+            userImage.destroy();
+        }
+
         const createdImage = await UserImage.create({
             user_id: userId,
             originalname,
