@@ -2,6 +2,7 @@ const Sequelize = require('sequelize');
 const sequelize = require('../database');
 const Post = require('./PostModel');
 const CommentLike = require('./CommentLikeModel');
+const User = require('./UserModel');
 
 const Comment = sequelize.define('comments', {
   id: {
@@ -36,6 +37,7 @@ const Comment = sequelize.define('comments', {
   timestamps: true,
 });
 
+Comment.belongsTo(User, { foreignKey: 'user_id' });
 Comment.hasMany(CommentLike, { foreignKey: 'comments_id' });
 
 module.exports = Comment;

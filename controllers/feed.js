@@ -3,6 +3,7 @@ const PostImage = require('../models/PostImageModel');
 const PostLike = require('../models/PostLikeModel');
 const Comment = require('../models/CommentModel');
 const User = require("../models/UserModel");
+const UserImage = require("../models/UsersImagesModel");
 
 exports.getPosts = async function (req, res) {
     try {
@@ -11,21 +12,19 @@ exports.getPosts = async function (req, res) {
         const page = parseInt(req.query.page) || 1;
         const pageSize = parseInt(req.query.pageSize) || 6;
 
-        console.log(req.params);
-
         const offset = (page - 1) * pageSize;
 
         const posts = await Post.scope(['withLikeCount', 'withCommentCount', { method: ['withLikeByUser', userId] }]).findAll({
             offset: offset,
             limit: pageSize,
-            include: [PostImage],
             order: [['id', 'DESC']],
             include: [
                 PostImage,
                 {
                     model: User,
-                    attributes: ['id', 'name', 'email']
-                }
+                    attributes: ['id', 'name', 'nickname', 'email'],
+                    include: UserImage
+                },
             ],
             order: [['created_at', 'DESC']],
             userId
@@ -111,8 +110,6 @@ exports.deletePost = async function (req, res) {
 exports.createPost = async function (req, res) {
     const { description } = req.body;
 
-    console.log(req.body);
-    console.log(req.user);
     try {
         // Crie o post no banco de dados usando o modelo Post
         const createdPost = await Post.create({
@@ -182,7 +179,7 @@ exports.likePost = async function (req, res) {
 
         res.json({ message: 'You liked the post.' });
     } catch (error) {
-        console.log(error);
+        console.error(error);
         if (error.parent?.sqlState === '23000') {
 
             if (error.index === 'fk_users_has_posts_posts1' && error.value === String(req?.params?.postId)) {

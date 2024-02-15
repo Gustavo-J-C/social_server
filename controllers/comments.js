@@ -1,24 +1,36 @@
 const Comment = require('../models/CommentModel');
+const User = require('../models/UserModel');
+const UserImage = require('../models/UsersImagesModel');
 
 exports.createComment = async function(req, res) {
     try {
-        const postId = req.body.postId; // Obtém o postId do corpo da solicitação
+        const postId = req.body.postId;
         const user_id = req.user.userId;
 
-        // Verifica se o postId foi fornecido
         if (!postId) {
             return res.status(400).json({ message: 'O campo post_id é obrigatório para criar um comentário.' });
         }
 
-        // Crie um novo comentário associado ao post com base no postId
+        // Obtém o usuário e sua imagem associada
+        const user = await User.findByPk(user_id, {
+            attributes: ["id", "name", "nickname", "email"],
+            include: UserImage
+        });
+
+        // Crie um novo comentário associado ao post com base no postId e ao usuário
         const newComment = await Comment.create({
-            user_id, // Suponha que o usuário está autenticado e você obtém o ID do usuário de alguma forma
+            user_id: user_id,
             post_id: postId,
             description: req.body.description,
         });
-        console.log(newComment);
 
-        res.status(201).json({message:"comment created succefully", data: newComment});
+        res.status(201).json({
+            message: "comment created successfully",
+            data: {
+                comment: newComment,
+                user
+            }
+        });
     } catch (error) {
         console.error('Erro ao criar um novo comentário:', error);
         res.status(500).json({ message: 'Erro ao criar um novo comentário.' });
@@ -33,9 +45,14 @@ exports.getPostComments = async function (req, res) {
             where: {
                 post_id: postId,
             },
+            include: [
+                {
+                    model: User,
+                    attributes: ['id', 'name', 'nickname', 'email'],
+                    include: UserImage
+                }
+            ]
         });
-
-        console.log(comments)
 
         res.status(200).json({
             data: {

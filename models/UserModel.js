@@ -1,5 +1,6 @@
 const Sequelize = require('sequelize');
 const sequelize = require('../database');
+const UserImage = require('./UsersImagesModel');
 
 const User = sequelize.define('users', {
   id: {
@@ -41,6 +42,8 @@ const User = sequelize.define('users', {
 }, {
   timestamps: false,
 });
+
+User.hasOne(UserImage, { foreignKey: "user_id"} )
 
 User.belongsToMany(User, {
   as: 'followers', // Apelido para a associação de seguidores

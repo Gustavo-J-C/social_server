@@ -4,7 +4,6 @@ function authenticateToken(req, res, next) {
   // Recupere o token JWT do cabeçalho Authorization
   const token = req.header('Authorization');
 
-  console.log(token);
   if (!token) {
     return res.status(401).json({ message: 'Unauthorized' });
   }
