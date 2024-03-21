@@ -14,7 +14,7 @@ const User = sequelize.define('users', {
   },
   nickname: {
     type: Sequelize.STRING(100),
-    allowNull: false
+    allowNull: true
   },
   password: {
     type: Sequelize.STRING(255),

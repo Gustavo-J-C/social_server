@@ -43,10 +43,10 @@ exports.getPost = async function (req, res) {
 
         const post = await Post.findByPk(postId, {
             include: [PostImage,
-            {
-                model: User,
-                attributes: ['id', 'name', 'email']
-            }]
+                {
+                    model: User,
+                    attributes: ['id', 'name', 'email']
+                }]
         })
 
         res.send({
@@ -126,6 +126,44 @@ exports.createPost = async function (req, res) {
         res.status(500).json({ message: 'Error creating post' });
     }
 };
+
+exports.updatePost = async function (req, res) {
+    const { title, description } = req.body;
+    const postId = req.params.id;
+    const userId = req.user ? req.user.userId : null;
+
+    try {
+        // Verificar se o usuário está autenticado
+        if (!userId) {
+            return res.status(401).json({ message: 'Unauthorized: User not authenticated' });
+        }
+
+        // Verificar se a postagem existe
+        const post = await Post.findByPk(postId);
+        if (!post) {
+            return res.status(404).json({ message: 'Post not found' });
+        }
+
+        // Verificar se o usuário tem permissão para atualizar a postagem
+        if (post.users_id !== userId) {
+            return res.status(403).json({ message: 'Forbidden: User does not have permission to update this post' });
+        }
+
+        // Atualizar os campos da postagem
+        post.description = description;
+        post.title = title;
+        await post.save();
+
+        return res.status(200).json({
+            message: 'Post updated successfully',
+            post: post,
+        });
+    } catch (error) {
+        console.error('Error updating post:', error);
+        return res.status(500).json({ message: 'Error updating post' });
+    }
+};
+
 
 exports.uploadPostImages = async function (req, res) {
     try {

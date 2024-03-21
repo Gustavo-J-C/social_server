@@ -9,6 +9,7 @@ routes.get('/posts', feedController.getPosts)
 
 routes.get('/post/:postId', feedController.getPost)
 routes.delete('/post/:id', authenticateToken, feedController.deletePost)
+routes.put('/post/:id', authenticateToken, feedController.updatePost)
 
 routes.get('/user/:userId/posts', authenticateToken, feedController.getUserPosts);
 
